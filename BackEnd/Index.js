@@ -10,30 +10,30 @@ dotenv.config()
 const port = process.env.PORT
 app.use(express.json())
 app.use(cors())
-const mongodbURL = process.env.MONGO
+const mongodbURL = process.env.MONGO_URL
 
 
 
-// const connectionParams = {
-//     useNewUrlParser : true,
-//     useUnifiedTopology : true
-// }
+const connectionParams = {
+    useNewUrlParser : true,
+    useUnifiedTopology : true
+}
 
-// mongoose.connect(mongodbURL,connectionParams)
-//     .then(()=>{
-//         console.log('connected to databse')
-//     })
-//     .catch(e=>{
-//         console.log(e)
-//     })
-
-mongoose.connect("mongodb://127.0.0.1:27017/reflection")
+mongoose.connect(mongodbURL,connectionParams)
     .then(()=>{
-        console.log("databse is conneted successfully")
+        console.log('connected to databse')
     })
-    .catch(()=>{
-        console.log("error connectiong databse")
+    .catch(e=>{
+        console.log(e)
     })
+
+// mongoose.connect("mongodb://127.0.0.1:27017/reflection")
+//     .then(()=>{
+//         console.log("databse is conneted successfully")
+//     })
+//     .catch(()=>{
+//         console.log("error connectiong databse")
+//     })
 
 
 
