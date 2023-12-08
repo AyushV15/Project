@@ -8,8 +8,12 @@ const dotenv = require('dotenv')
 
 dotenv.config()
 const port = process.env.PORT
+
+const corsOptions = {
+    origin : "https://reflect-pwdx.onrender.com/"
+}
 app.use(express.json())
-app.use(cors())
+app.use(cors(corsOptions))
 const mongodbURL = process.env.MONGO_URL
 
 
