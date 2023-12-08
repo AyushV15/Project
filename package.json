@@ -2,10 +2,10 @@
   "name": "ref",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "Index.js",
   "scripts": {
     "install-server": "cd BackEnd && npm install",
-    "start-server": "cd BackEnd && node index.js",
+    "start-server": "cd BackEnd && node Index.js",
     "install-client": "cd FrontEnd && npm install",
     "build-client": "cd FrontEnd && npm run build",
     "start-client": "cd FrontEnd && npm run start"
