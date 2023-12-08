@@ -10,7 +10,7 @@ dotenv.config()
 const port = process.env.PORT
 
 const corsOptions = {
-    origin : "https://reflect-pwdx.onrender.com/"
+    origin : "https://reflect-pwdx.onrender.com"
 }
 app.use(express.json())
 app.use(cors(corsOptions))
