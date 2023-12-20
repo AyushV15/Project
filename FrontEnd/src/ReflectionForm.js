@@ -1,18 +1,21 @@
 
 import { useState } from "react"
 import axios from "./axios"
-export default function ReflectionForm(){
+import { ToastContainer,toast } from "react-toastify"
+export default function ReflectionForm({form,dispatch,closeForm,closeEditForm}){
 
-    const [Formtitle,setFormTitle] = useState('')
+
+    const [Formtitle,setFormTitle] = useState(form ? form.Formtitle : "")
     const [description,setDes] = useState('')
-    const [quetions,setQuestions] = useState([{title : ""}])
+    const [quetions,setQuestions] = useState(form ? form.Questions : [{title : ""}])
 
     const handleAdd = () =>{
         let data = [...quetions,{title : ""}]
         setQuestions(data)
     }
 
-    const handleRemove = (index) =>{
+    const handleRemove = (index,e) =>{
+        e.preventDefault()
         let data = [...quetions]
         data.splice(index,1)
         setQuestions(data)
@@ -31,12 +34,30 @@ export default function ReflectionForm(){
             description,
             Questions : quetions
         }
-        try{
-            const response = await axios.post("api/form",formdata)   
-            console.log(response,"response")
-        }catch(e){
-            console.log(e)
+        if(form){
+            try{
+                const response = await axios.put(`api/form/${form._id}`,formdata)
+                console.log(response,"Edited")
+                toast.success("form updated successfully")
+                closeEditForm()
+                dispatch({type : "UPDATE" , payload : response.data})
+            }catch(e){
+                console.log(e)
+            }
         }
+        else{
+            try{
+                const response = await axios.post("api/form",formdata)   
+                console.log(response,"response")
+                dispatch({type : "ADD", payload : response.data})
+                toast.success("form created successfully")
+                closeForm()
+                
+            }catch(e){
+                console.log(e)
+            }
+        }
+        
         console.log(formdata)
         setFormTitle("")
         setDes("")
@@ -53,7 +74,7 @@ export default function ReflectionForm(){
                 {quetions.map((ele,i) =>{
                     return(
                         <div>
-                            <input type="text" name="title" value={ele.title}  placeholder = {`question - ${i+1}`} onChange={(e)=>handleChange(i,e)}/><button onClick={(e)=>handleRemove(i)}>Remove</button>
+                            <input type="text" name="title" value={ele.title}  placeholder = {`question - ${i+1}`} onChange={(e)=>handleChange(i,e)}/><button onClick={(e)=>handleRemove(i,e)}>Remove</button>
                             <br/>
                         </div>
                     )
@@ -63,9 +84,7 @@ export default function ReflectionForm(){
                 handleAdd()}}>
                 Add Question</button><br/>
                 <input type="submit"/>
-            </form>
-            
-            
+            </form>  
         </div>
     )
 }

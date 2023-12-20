@@ -1,42 +1,102 @@
-import { useEffect, useState } from "react"
+import { useEffect, useReducer, useState } from "react"
 import Papa from "papaparse"
 import { ToastContainer,toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import axios from "./axios"
 import ReflectionForm from "./ReflectionForm"
-import {Accordion} from "react-bootstrap"
+import {Accordion,Modal,Button} from "react-bootstrap"
+
+const reducer = (state,action) =>{
+    switch(action.type){
+        case "ADD" : {
+            return [...state,action.payload]
+        } 
+        case "SETFORMS" : {
+            return [...state,...action.payload]
+        }
+        case "UPDATE" : {
+            return state.map(ele =>{
+                if(ele._id == action.payload._id){
+                    return {...ele,...action.payload}
+                }
+                else{
+                    return {...ele}
+                }
+            })
+            
+        }
+        case "DELETE" : {
+            return state.filter(ele => ele._id !== action.payload)
+        }
+        default : {
+            return [...state]
+        }
+    }
+}
 
 
 
-export default function Reflections(){
+export default function Reflection2(){
 
+    const [allforms,dispatch] = useReducer(reducer,[])
     const[form,setForm] = useState(false)
+    const [editForm,setEditForm] = useState(false)
+    const [modal,setModal] = useState(false)
+    const [selectedForm,setSelectedForm] = useState("")
 
-    const [RADIOS,setRADIOS] = useState([])
     useEffect(()=>{
         (async ()=>{
             try{
                 const response = await axios.get('api/radio')
-                console.log(response)
-                const res = []
-                response.data.forEach(ele =>{
-                    res.push(ele.Formtitle)
-                })
-                setRADIOS(res)
+                console.log(response,"all the forms")
+                dispatch({type : "SETFORMS",payload : response.data})
             }catch(e){
                 console.log(e)
             }
         })()
     },[])
 
-    const [radio,setRadio] = useState('')
+    const handleShowForm = async (id) =>{
+        try{
+            const response = await axios.get(`api/form/${id}`)
+            console.log(response,"one Form")
+            setSelectedForm(response.data)
+            setModal(true)
+        }catch(e){
+            console.log(e)
+        }
+    }
 
+    const handleDelete = async (id) =>{
+        const confirm = window.confirm("are you sure")
+        if(confirm){
+            try{
+                axios.delete(`api/form/${id}`)
+                dispatch({type : "DELETE",payload : id})
+            }catch(e){
+                console.log(e)
+            }
+        }
+        setModal(false)
+    }
+
+    const closeForm = () =>{
+        setForm(false)
+    }
+    const closeEditForm = () =>{
+        setEditForm(false)
+        setModal(false)
+    }
+   
+    //getting form and maping the questions to answers
+    const [radio,setRadio] = useState('')
+    const [search,setSearch] = useState("")
     const [Arr,setArr] = useState([])
     const [data,setData] = useState(false)
     const [view,setView] = useState(false)
     const [file,setfile] = useState(null)
     const [results,setResults] = useState([])
-
+    
     const answered = results.filter(ele =>{
         return ele.QA.A.length !== 0
     })
@@ -44,17 +104,7 @@ export default function Reflections(){
     const notAnswered = results.filter(ele =>{
         return ele.QA.A.length == 0
     })
-
-    const handleSearch = (value) =>{
-        const f = Arr.filter(ele =>{
-            if(ele.name){
-                return ele.name.includes(value)
-            }
-        })
-        setResults(f)
-    }
-
-    console.log(results)
+    
     const handleClick = () =>{
         console.log(file)
         Papa.parse(file,{
@@ -67,7 +117,7 @@ export default function Reflections(){
                     res1.forEach(ele => {
                         finalRes.push(ele.title)
                     });
-                    console.log(finalRes,"final")
+                    
                     
                 }catch(e){
                     console.log(e)
@@ -87,7 +137,7 @@ export default function Reflections(){
                     ele.QA.Q = finalRes
                     return ele
                 })
-              console.log(results.data)  
+           
               setResults(test1)
               setArr(test1) 
               setView(true)
@@ -100,39 +150,40 @@ export default function Reflections(){
     }
 
 
-    console.log(radio)
-    console.log(results)
+    
     return(
 
         <div>
-            <button onClick={()=>setForm(!form)}>Form</button>
+            <button onClick={()=>setForm(!form)}>{form ? "cancel" : "Form"}</button>
             {form && (
                 <div style={{border : "5px solid black"}}>
-                    <ReflectionForm/>
+                    <ReflectionForm dispatch = {dispatch} closeForm = {closeForm}/>
                 </div>
             )}
             <div style={{height : "20px"}}></div>
-            {RADIOS.map(ele =>{
+
+            {allforms.map(ele =>{
                 return(
                     <div>
-                        <input type="radio" value={ele} name = "type" onChange={(e) => setRadio(e.target.value)}/>{ele}
+                        <input type="radio" value={ele.Formtitle} name = "type" onChange={(e) => setRadio(e.target.value)}/>{ele.Formtitle}
+                        <button onClick={()=>handleShowForm(ele._id)}>Show</button>
                     </div>
-                    
                 )
             })}
 
             <br/>
             <input type="file" onChange={(e)=>setfile(e.target.files[0])}/>
             <button onClick={handleClick}>Upload</button><br/><br/>
+            {/* <button onClick = {()=>navigate("/")}></button> */}
             {view  && <button onClick={()=> {
                 setData(!data)
             }}>view Results</button>}
             {data && (
-                <input  onChange={(e)=>{
-                    handleSearch(e.target.value)
+                <input value={search}  onChange={(e)=>{
+                    setSearch(e.target.value)
                 }}/>
             )}
-            {data && answered.map(ele =>{
+            {data && answered.filter(ele => ele.name.includes(search)).map(ele =>{
                 return(
                     <div>
                             <Accordion>
@@ -156,9 +207,8 @@ export default function Reflections(){
 
             <br/><br/>
             {data && <h3>Student who have not answered</h3>}
-            {data && notAnswered.map(ele =>{
+            {data && notAnswered.filter(ele => ele.name.includes(search)).map(ele =>{
                 return(
-                    
                     <div>
                             <Accordion>
                             <Accordion.Item eventKey={0}>
@@ -179,8 +229,37 @@ export default function Reflections(){
                 
                 )  
             })}
-        <ToastContainer/>  
+
+    {selectedForm && (
+        <Modal show = {modal} onHide={()=>{
+            setEditForm(false)
+            setModal(false)}}>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedForm.Formtitle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {editForm ? (
+            <ReflectionForm form = {selectedForm} closeEditForm = {closeEditForm} dispatch = {dispatch}/>
+        ) : (
+            <ol>{selectedForm.Questions.map(ele =>{
+                return(
+                <li>{ele.title}</li>
+                )
+            })}</ol>
+        )}
         
+        </Modal.Body>
+        <Modal.Footer>
+          <button onClick={()=>handleDelete(selectedForm._id)}>delete form</button>
+          <Button variant="primary" onClick={()=>setEditForm(!editForm)}>
+            {editForm ? "cancel" : "edit"}
+          </Button>
+        </Modal.Footer>
+        </Modal>
+    )}
+        
+        <ToastContainer/>  
+
         </div> 
     )
 }
