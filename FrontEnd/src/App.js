@@ -1,6 +1,6 @@
 import Login from "./Login";
-import Reflections from "./Reflections";
 import { BrowserRouter,Route,Routes,Link } from "react-router-dom";
+import Reflection2 from "./Refelctions2";
 
 export default function(){
   return(
@@ -8,7 +8,7 @@ export default function(){
     <div>
         <Routes>
           <Route path="/" element = {<Login/>}/>
-          <Route path="/dashboard" element = {<Reflections/>}/>
+          <Route path="/dashboard" element = {<Reflection2/>}/>
         </Routes>
     </div>
     </BrowserRouter>

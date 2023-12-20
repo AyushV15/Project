@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css"
 import axios from "./axios"
 import ReflectionForm from "./ReflectionForm"
 import {Accordion,Modal,Button} from "react-bootstrap"
+import { useNavigate } from "react-router-dom"
 
 const reducer = (state,action) =>{
     switch(action.type){
@@ -38,6 +39,7 @@ const reducer = (state,action) =>{
 
 export default function Reflection2(){
 
+    const navigate = useNavigate()
     const [allforms,dispatch] = useReducer(reducer,[])
     const[form,setForm] = useState(false)
     const [editForm,setEditForm] = useState(false)
@@ -174,7 +176,7 @@ export default function Reflection2(){
             <br/>
             <input type="file" onChange={(e)=>setfile(e.target.files[0])}/>
             <button onClick={handleClick}>Upload</button><br/><br/>
-            {/* <button onClick = {()=>navigate("/")}></button> */}
+            <button onClick = {()=>navigate("/")}>Logout</button>
             {view  && <button onClick={()=> {
                 setData(!data)
             }}>view Results</button>}
