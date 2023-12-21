@@ -103,6 +103,7 @@ export default function Reflection2(){
     const answered = results.filter(ele =>{
         return ele.QA.A.length !== 0
     })
+    console.log(answered)
 
     const notAnswered = results.filter(ele =>{
         return ele.QA.A.length == 0
@@ -121,7 +122,6 @@ export default function Reflection2(){
                         finalRes.push(ele.title)
                     });
                     
-                    
                 }catch(e){
                     console.log(e)
                 }
@@ -133,7 +133,7 @@ export default function Reflection2(){
                             ans.push(obj[key])
                         }
                     }
-                    return {Name : obj.Name , QA : {A : ans}}
+                    return {name : obj.Name , QA : {A : ans}}
                 })
 
                 const test1 = test.map(ele =>{
@@ -196,7 +196,11 @@ export default function Reflection2(){
                     setSearch(e.target.value)
                 }}/>
             )}
-            {data && answered.filter(ele => ele.Name.includes(search)).map(ele =>{
+            {data && answered.filter(ele => {
+                if(ele.name){
+                    return ele.name.includes(search)
+                }
+            }).map(ele =>{
                 return(
                     <div>
                             <Accordion>
@@ -220,7 +224,11 @@ export default function Reflection2(){
 
             <br/><br/>
             {data && <h3>Student who have not answered</h3>}
-            {data && notAnswered.filter(ele => ele.Name.includes(search)).map(ele =>{
+            {data && notAnswered.filter(ele => {
+                if(ele.name){
+                    return ele.name.includes(search)
+                }
+            }).map(ele =>{
                 return(
                     <div>
                             <Accordion>
