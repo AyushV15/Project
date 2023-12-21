@@ -225,7 +225,7 @@ export default function Reflection2(){
                     <div>
                             <Accordion>
                             <Accordion.Item eventKey={0}>
-                            <Accordion.Header>{ele.name}</Accordion.Header>
+                            <Accordion.Header>{ele.Name}</Accordion.Header>
                             <Accordion.Body>
                             {ele.QA.Q.map((q,i) => {
                                 return(
