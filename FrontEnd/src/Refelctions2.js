@@ -37,12 +37,12 @@ const reducer = (state,action) =>{
 }
 
 
-
+  
 export default function Reflection2(){
 
     const navigate = useNavigate()
     const [allforms,dispatch] = useReducer(reducer,[])
-    const[form,setForm] = useState(false)
+    const [form,setForm] = useState(false)
     const [editForm,setEditForm] = useState(false)
     const [modal,setModal] = useState(false)
     const [selectedForm,setSelectedForm] = useState("")
@@ -178,7 +178,7 @@ export default function Reflection2(){
                         <input type="radio" value={ele.Formtitle} name = "type" onChange={(e) => setRadio(e.target.value)}/>{ele.Formtitle}
                         <Button className="float-end show-button" variant="success" size="sm"  onClick={()=>handleShowForm(ele._id)}>Show</Button>
                         </ListGroup.Item>
-                    </div>
+                                            </div>
                 )
             })}
             </ListGroup>
@@ -196,7 +196,7 @@ export default function Reflection2(){
                     setSearch(e.target.value)
                 }}/>
             )}
-            {data && answered.filter(ele => ele.name.includes(search)).map(ele =>{
+            {data && answered.filter(ele => ele.Name.includes(search)).map(ele =>{
                 return(
                     <div>
                             <Accordion>
@@ -216,11 +216,11 @@ export default function Reflection2(){
                         </Accordion>
                     </div>
                 )  
-            })}
+            })}  
 
             <br/><br/>
             {data && <h3>Student who have not answered</h3>}
-            {data && notAnswered.filter(ele => ele.name.includes(search)).map(ele =>{
+            {data && notAnswered.filter(ele => ele.Name.includes(search)).map(ele =>{
                 return(
                     <div>
                             <Accordion>
