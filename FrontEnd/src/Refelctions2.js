@@ -133,7 +133,7 @@ export default function Reflection2(){
                             ans.push(obj[key])
                         }
                     }
-                    return {name : obj.Name , QA : {A : ans}}
+                    return {Name : obj.Name , QA : {A : ans}}
                 })
 
                 const test1 = test.map(ele =>{
