@@ -1,0 +1,20 @@
+.header{
+    height: 50px;
+    background-color: rgb(55, 47, 47);
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.form-button{
+    margin-top: 10px;
+}
+
+.show-button{
+    background-color: rgb(179, 230, 104);
+    color: black;
+}
+
+.show-button:hover{
+    background-color: green
+}

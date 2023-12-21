@@ -4,8 +4,9 @@ import { ToastContainer,toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import axios from "./axios"
 import ReflectionForm from "./ReflectionForm"
-import {Accordion,Modal,Button} from "react-bootstrap"
+import {Accordion,Modal,Button,ListGroup,Col, Row} from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
+import "./Reflections.css"
 
 const reducer = (state,action) =>{
     switch(action.type){
@@ -156,7 +157,10 @@ export default function Reflection2(){
     return(
 
         <div>
-            <button onClick={()=>setForm(!form)}>{form ? "cancel" : "Form"}</button>
+            <div className="header">
+                <h1>File Parser</h1>
+            </div>
+            <Button variant="primary form-button" onClick={()=>setForm(!form)}>{form ? "cancel" : "Form"}</Button>
             {form && (
                 <div style={{border : "5px solid black"}}>
                     <ReflectionForm dispatch = {dispatch} closeForm = {closeForm}/>
@@ -164,15 +168,22 @@ export default function Reflection2(){
             )}
             <div style={{height : "20px"}}></div>
 
+            <Row>
+            <Col md = {4}>
+            <ListGroup>
             {allforms.map(ele =>{
                 return(
                     <div>
+                        <ListGroup.Item>
                         <input type="radio" value={ele.Formtitle} name = "type" onChange={(e) => setRadio(e.target.value)}/>{ele.Formtitle}
-                        <button onClick={()=>handleShowForm(ele._id)}>Show</button>
+                        <Button className="float-end show-button" variant="success" size="sm"  onClick={()=>handleShowForm(ele._id)}>Show</Button>
+                        </ListGroup.Item>
                     </div>
                 )
             })}
-
+            </ListGroup>
+            </Col>
+            </Row>
             <br/>
             <input type="file" onChange={(e)=>setfile(e.target.files[0])}/>
             <button onClick={handleClick}>Upload</button><br/><br/>
@@ -252,7 +263,7 @@ export default function Reflection2(){
         
         </Modal.Body>
         <Modal.Footer>
-          <button onClick={()=>handleDelete(selectedForm._id)}>delete form</button>
+          <Button variant="danger" onClick={()=>handleDelete(selectedForm._id)}>delete form</Button>
           <Button variant="primary" onClick={()=>setEditForm(!editForm)}>
             {editForm ? "cancel" : "edit"}
           </Button>
